@@ -12,14 +12,18 @@ func NewDispatcher(maxWorkers int) *Dispatcher {
 	return &Dispatcher{WorkerPool: pool, MaxWorkers: maxWorkers, Workers: make([]Worker, maxWorkers)}
 }
 
-func (d *Dispatcher) Run(jQ chan Job) {
+func (d *Dispatcher) Run(queues int) chan Job {
 	// starting n number of workers
 	for i := 0; i < d.MaxWorkers; i++ {
 		d.Workers[i] = NewWorker(d.WorkerPool)
 		d.Workers[i].Start()
 	}
 
-	go d.dispatch(jQ)
+	JobQueue := make(chan Job, queues)
+
+	go d.dispatch(JobQueue)
+
+	return JobQueue
 }
 
 func (d *Dispatcher) Stop() {

@@ -31,9 +31,8 @@ func main() {
 	var queues = flag.Int("q", 2, "Number of queues")
 	flag.Parse()
 
-	JobQueue := make(chan worker.Job, *queues)
 	dispatcher := worker.NewDispatcher(*workers)
-	dispatcher.Run(JobQueue)
+	JobQueue := dispatcher.Run(*queues)
 
 	wg := &sync.WaitGroup{}
 	for i := 0; i < *jobs; i++ {
