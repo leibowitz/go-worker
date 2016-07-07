@@ -3,6 +3,7 @@ package worker
 type Job interface {
 	String() string
 	Process() error
+	Result(error)
 }
 
 // Worker represents the worker that executes the job
@@ -29,8 +30,7 @@ func (w Worker) Start() {
 
 			select {
 			case job := <-w.JobChannel:
-				if err := job.Process(); err != nil {
-				}
+				job.Result(job.Process())
 
 			case <-w.quit:
 				// we have received a signal to stop
